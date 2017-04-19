@@ -1,20 +1,14 @@
 const {
-  EXPECTED_COLOR,
-  RECEIVED_COLOR,
-  ensureNoExpected,
-  ensureNumbers,
-  getType,
   matcherHint,
   printReceived,
   printExpected,
-  printWithType,
 } = require('jest-matcher-utils');
 const parse = require('styled-components/lib/vendor/postcss-safe-parser/parse');
 
 expect.extend({
-  toHaveStyleRule(received, name, value) {
-    const { rules } = received.type();
-    const props = received.props();
+  toHaveStyleRule(component, name, expected) {
+    const { rules } = component.type();
+    const props = component.props();
     const ast = parse(rules.join());
 
     /**
@@ -30,23 +24,43 @@ expect.extend({
      * We also take the last matched node because
      * developer may override initial assignment
      */
-    const node = ast.nodes.filter((node) => {
-      switch (node.type) {
+    const node = ast.nodes.filter((n) => {
+      switch (n.type) {
         case 'rule':
-          return node.selector.indexOf(name) === 0;
+          return n.selector.indexOf(name) === 0;
         case 'decl':
-          return node.prop === name;
-        default: break;
+          return n.prop === name;
+        default:
+          return false;
       }
     }).pop();
 
-    let result = node.value;
+    let received;
+
+    /**
+     * If node is not found (typo in the rule name /
+     * rule isn't specified for component), we return
+     * a special message
+     */
+    if (!node) {
+      const error = `${name} isn't in the style rules`;
+      return {
+        message: () =>
+          `${matcherHint('.toHaveStyleRule')}'\n\n` +
+          `Expected ${component.name()} to have a style rule:\n` +
+          `  ${printExpected(`${name}: ${expected}`)}\n` +
+          'Received:\n' +
+          `  ${printReceived(error)}`,
+        pass: false,
+      };
+    }
 
     /**
      * In a case of declaration, it's fairly easy to check if expected === given
      */
     if (node.type === 'decl') {
-      pass = node.value === value;
+      pass = node.value === expected;
+      received = node.value;
     /**
      * But in case of rule we have quite some complexity here:
      * We can't get a ref to the function using `postcss-safe-parser`, so
@@ -57,33 +71,24 @@ expect.extend({
      * invoke it with props, taken from the enzyme
      */
     } else {
-      const match = node.source.input.css.match(new RegExp(`${name}:.*,function \(.*\)\{(.*)\},;`));
+      const match = node.source.input.css.match(new RegExp(`${name}:.*,function (.*){(.*)},;`));
       const param = match[1].slice(1, -1);
       const fn = Function(param, match[2]);
-      result = fn(props);
-      pass = result === value;
+      received = fn(props);
+      pass = received === expected;
     }
 
-    const message = pass
-      ? () =>
-        matcherHint('.not.toHaveStyleRule') + '\n\n' +
-        `Expected ${received.type().displayName} to have style rule:\n` +
-        `  ${printExpected(`${name}: ${value}`)}\n` +
-        `Received:\n` +
-        `  ${printReceived(name + ': ' + result)}`
-    : () => {
-        return (
-          matcherHint('.toHaveStyleRule') + '\n\n' +
-          `Expected ${received.type().displayName} to have style rule:\n` +
-          `  ${printExpected(`${name}: ${value}`)}\n` +
-          `Received:\n` +
-          `  ${printReceived(name + ': ' + result)}`
-        );
-      };
+    const diff = '' +
+      `  ${printExpected(`${name}: ${expected}`)}\n` +
+      'Received:\n' +
+      `  ${printReceived(`${name}: ${received}`)}`;
 
-    /**
-     * Construct a message to return
-     */
+    const message = pass
+      ? () => `${matcherHint('.not.toHaveStyleRule')}'\n\n` +
+        `Expected ${component.name()} not to contain:\n${diff}`
+      : () => `${matcherHint('.toHaveStyleRule')}'\n\n` +
+        `Expected ${component.name()} to have a style rule:\n${diff}`;
+
     return { message, pass };
   },
 });
