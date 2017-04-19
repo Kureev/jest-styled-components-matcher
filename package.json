@@ -6,6 +6,7 @@
   "author": "Alexey Kureev <a.g.kureev@gmail.com>",
   "license": "MIT",
   "dependencies": {
+    "jest-matcher-utils": "^19.0.0",
     "styled-components": "1.3"
   }
 }
