@@ -4,5 +4,12 @@
   "description": "Jest matchers for styled components",
   "main": "index.js",
   "author": "Alexey Kureev <a.g.kureev@gmail.com>",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "enzyme": "^2.8.2",
+    "jest": "^19.0.2",
+    "react": "^15.5.4",
+    "react-dom": "^15.5.4",
+    "react-native": "^0.43.3"
+  }
 }
