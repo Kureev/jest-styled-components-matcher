@@ -1,4 +1,4 @@
-Jest matchers for styled-components (React Native)
+[React Native] Jest matchers for styled-components
 ==
 
 ## Motivation
@@ -26,3 +26,11 @@ describe('Avatar', () => {
   });
 });
 ```
+
+## Assertation messages
+
+- Wrong value
+![](https://snag.gy/4Z07wJ.jpg)
+
+- Missing rule
+![](https://snag.gy/gbOw1J.jpg)
