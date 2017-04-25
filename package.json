@@ -6,8 +6,10 @@
   "author": "Alexey Kureev <a.g.kureev@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "jest-matcher-utils": "^19.0.0",
     "styled-components": "1.3"
+  },
+  "peerDependencies": {
+    "jest-matcher-utils": "^19.0.0"
   },
   "devDependencies": {
     "eslint": "^3.19.0",
