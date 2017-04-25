@@ -1,6 +1,6 @@
 {
   "name": "jest-styled-components-matcher",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Jest matchers for styled components",
   "main": "index.js",
   "author": "Alexey Kureev <a.g.kureev@gmail.com>",
@@ -13,10 +13,10 @@
   },
   "devDependencies": {
     "eslint": "^3.19.0",
-		"eslint-config-airbnb": "^14.1.0",
-		"eslint-plugin-flowtype": "^2.30.4",
-		"eslint-plugin-import": "^2.2.0",
-		"eslint-plugin-jsx-a11y": "^4.0.0",
-		"eslint-plugin-react": "^6.10.3"
+    "eslint-config-airbnb": "^14.1.0",
+    "eslint-plugin-flowtype": "^2.30.4",
+    "eslint-plugin-import": "^2.2.0",
+    "eslint-plugin-jsx-a11y": "^4.0.0",
+    "eslint-plugin-react": "^6.10.3"
   }
 }
